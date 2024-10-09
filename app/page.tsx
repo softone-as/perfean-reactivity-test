@@ -35,6 +35,10 @@ export default function Page() {
     setCart((prev) => prev.filter((p) => p.id !== id));
   };
 
+  const addToCart = (data: CartItem) => {
+    setCart((prev) => [...prev, data]);
+  };
+
   const totalPrice = useMemo(() => {
     return cart.reduce(
       (acc, product) => acc + product.price * product.quantity,
@@ -48,8 +52,8 @@ export default function Page() {
         <Card
           key={product.id}
           {...product}
-          isAddedToCart={cart.findIndex((p) => p.id === product.id) >= 0}
-          onAddToCart={(data) => setCart([...cart, data])}
+          isAddedToCart={cart.some((p) => p.id === product.id)}
+          onAddToCart={addToCart}
         />
       ))}
       {cart.length > 0 && (
