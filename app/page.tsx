@@ -6,7 +6,7 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 type Product = {
   id: number;
@@ -30,29 +30,17 @@ const PRODUCTS: Product[] = [
 
 export default function Page() {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [quantities, setQuantities] = useState<{
-    [id: string]: number | undefined;
-  }>({});
 
-  const removeFromCart = (product: Product) => {
-    setCart(cart.filter((p) => p.id !== product.id));
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((p) => p.id !== id));
   };
 
-  useEffect(() => {
-    setQuantities(
-      cart.reduce(
-        (acc, product) => ({ ...acc, [product.id]: product.quantity }),
-        {},
-      ),
+  const totalPrice = useMemo(() => {
+    return cart.reduce(
+      (acc, product) => acc + product.price * product.quantity,
+      0
     );
   }, [cart]);
-
-  const totalPrice = cart
-    .reduce(
-      (total, product) => total + product.price * (quantities[product.id] || 1),
-      0,
-    )
-    .toFixed(2);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -84,7 +72,7 @@ export default function Page() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeFromCart(product)}
+                      onClick={() => removeFromCart(product.id)}
                     >
                       <XIcon className="w-4 h-4" />
                     </Button>
