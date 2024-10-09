@@ -49,7 +49,7 @@ export default function Page() {
           key={product.id}
           {...product}
           isAddedToCart={cart.findIndex((p) => p.id === product.id) >= 0}
-          onAddToCart={(data) => setCart([...cart, data])}
+          onAddToCart={(data) => setCart((prev) => [...prev, data])}
         />
       ))}
       {cart.length > 0 && (
